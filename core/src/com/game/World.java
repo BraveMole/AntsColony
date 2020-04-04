@@ -2,6 +2,8 @@ package com.game;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 
@@ -11,6 +13,8 @@ public class World extends Stage {
 
     private float zoneSize;
     private ShapeRenderer shape;
+    private Group ants;
+    private Group environment;
 
     private Array<Array<Zone>> LZone;
 
@@ -18,6 +22,18 @@ public class World extends Stage {
         this.zoneSize = zoneSize;
         this.LZone = new Array<>();
         shape = new ShapeRenderer();
+        ants = new Group();
+        environment = new Group();
+        super.getRoot().addActor(environment);
+        super.getRoot().addActor(ants);
+    }
+
+    public void addAnt(Actor actor) {
+        this.ants.addActor(actor);
+    }
+
+    public void addEnvironment(Actor actor) {
+        this.environment.addActor(actor);
     }
 
     public float getZoneSize() {
@@ -38,7 +54,6 @@ public class World extends Stage {
         if (row > 0) {
             zone.addNeighbour(this.LZone.get(column).get(row - 1), true);
         }
-
     }
 
     @Override
@@ -46,7 +61,7 @@ public class World extends Stage {
         super.draw();
         shape.setColor(Color.RED);
         shape.begin(ShapeRenderer.ShapeType.Filled);
-        shape.circle(400, 200, 1);
+        shape.circle(500, 500, 1);
         shape.end();
 
     }

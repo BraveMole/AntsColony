@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.process.WorldCreation;
 import com.ressource.TextureLoader;
+import com.ressource.WorldSettings;
 
 import static com.game.World.mainWorld;
 
@@ -20,7 +21,7 @@ public class GameClass extends ApplicationAdapter {
     @Override
     public void create() {
         TextureLoader.loadTexture();
-        WorldCreation.Creation(200, 30);
+        WorldCreation.Creation(WorldSettings.TEST_WORLD);
         cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
         cam.update();

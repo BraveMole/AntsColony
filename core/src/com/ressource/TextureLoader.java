@@ -1,15 +1,13 @@
 package com.ressource;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class TextureLoader {
-    public static Texture ants;
     public static Texture foodSource;
     public static Texture anthill;
-    public static TextureRegion[] antsCycle;
-    public static Animation<TextureRegion> antsWalkingAnimation;
+    public static TextureRegion[] workerAntWalking;
+    public static TextureRegion[] workerAntEating;
 
     public static void loadTexture() {
         loadTextureAnts();
@@ -17,20 +15,18 @@ public class TextureLoader {
     }
 
     private static void loadTextureAnts() {
-        ants = new Texture("WorkerAntWalking.png");
-        antsCycle = new TextureRegion[4];
-        TextureRegion[][] tempFrames = TextureRegion.split(ants, 25, 37);
+        TextureLoader.workerAntWalking = new TextureRegion[4];
+        TextureRegion[][] tempFrames = TextureRegion.split(new Texture("WorkerAntWalking.png"), 25, 37);
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
-                antsCycle[j * 2 + i] = tempFrames[j][i];
+                TextureLoader.workerAntWalking[j * 2 + i] = tempFrames[j][i];
             }
         }
-        antsWalkingAnimation = new Animation<>(1f / 4f, antsCycle);
-    }
-
-    public static void disposeTextureAnts() {
-        ants.dispose();
-        foodSource.dispose();
+        workerAntEating = new TextureRegion[2];
+        tempFrames = TextureRegion.split(new Texture("workerAntEating.png"), 25, 37);
+        for (int i = 0; i < 2; i++) {
+            TextureLoader.workerAntEating[i] = tempFrames[0][i];
+        }
     }
 
     private static void loadTextureEnvironment() {

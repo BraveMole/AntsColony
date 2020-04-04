@@ -6,6 +6,7 @@ import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.process.SearchFood;
 import com.process.UsefulMath;
+import com.ressource.Animation;
 
 import java.util.Random;
 
@@ -15,6 +16,7 @@ public enum WorkerAntMovementState implements State<WorkerAnt> {
         @Override
         public void enter(WorkerAnt ant) {
             ant.setRotation(new Random().nextFloat() * 360);
+            ant.sprite.switchAnimation(Animation.WORKERANT_WALKING);
         }
 
         @Override
@@ -30,7 +32,7 @@ public enum WorkerAntMovementState implements State<WorkerAnt> {
     GO_TO_FOOD_SOURCE() {
         @Override
         public void update(WorkerAnt ant) {
-            if (UsefulMath.getDistanceActors(ant, ant.getGoal()) < 50) {
+            if (UsefulMath.getDistanceActors(ant, ant.getGoal()) < 25) {
                 ant.movementStateMachine.changeState(TAKE_FOOD);
             }
         }
@@ -40,6 +42,7 @@ public enum WorkerAntMovementState implements State<WorkerAnt> {
         @Override
         public void enter(WorkerAnt ant) {
             ant.setGoal(null);
+            ant.sprite.switchAnimation(Animation.WORKERANT_EATING);
         }
 
         @Override

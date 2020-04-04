@@ -1,6 +1,5 @@
 package com.actors;
 
-import com.ai.Pheromone;
 import com.ai.WorkerAntMovementState;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
@@ -12,23 +11,17 @@ import com.game.Zone;
 import com.process.SearchZone;
 import com.process.UsefulMath;
 import com.ressource.AnimatedSprite;
-import com.ressource.TextureLoader;
-
-import java.util.Random;
+import com.ressource.Animation;
+import com.ressource.AntsCharacteristics;
 
 public class WorkerAnt extends Actor {
-    static Random rand = new Random();
-
-    static float defaultSpeed;//Number of units for 1 second
-    static float defaultSensibility = 100;
-    static float deviation;//Deviation of gaussian law for random movement in degrees
     public StateMachine<WorkerAnt, WorkerAntMovementState> movementStateMachine;
     public AnimatedSprite sprite;
     private float speed;
     private Actor goal;
     private Vector2 movement;
     private Zone currentZone;
-    private Pheromone pheromone;
+    private float movementDeviation;
     private float sensibility;
     private float elapsedTimeBetweenDecision;
     private float carryPotential;
@@ -39,24 +32,32 @@ public class WorkerAnt extends Actor {
         this.setY(y);
         this.movement = new Vector2();
         this.elapsedTimeBetweenDecision = 0;
-        this.setPheromone(Pheromone.NO_PHEROMONE);
         this.setCurrentZone(SearchZone.searchZone(x, y));
         this.setRotation(rotation);
-        this.speed = WorkerAnt.defaultSpeed;
-        this.sensibility = WorkerAnt.defaultSensibility;
+        this.sprite = new AnimatedSprite(Animation.WORKERANT_WALKING, x, y, this.getRotation());
         this.movementStateMachine = new DefaultStateMachine<>(this, WorkerAntMovementState.SEARCH_FOR_FOOD_SOURCE);
         this.goal = null;
-        this.speed = 50f;
-        deviation = 9;
-        this.sprite = new AnimatedSprite(1 / 6f, TextureLoader.ants, TextureLoader.antsCycle, x, y, this.getRotation(), 25, 37);
+        this.setCharacteristics(AntsCharacteristics.WORKER_ANT);
     }
+
+    private void setCharacteristics(AntsCharacteristics characteristics) {
+        this.speed = characteristics.getSpeed();
+        this.sensibility = characteristics.getSensibility();
+        this.movementDeviation = characteristics.getMovementDeviation();
+        this.carryPotential = characteristics.getCarryingPotential();
+    }
+
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        this.sprite.animate(Gdx.graphics.getDeltaTime());
+        this.sprite.setPosition(this.getX(), this.getY());
+        this.sprite.setRotation(this.getRotation() - 90);
+        this.sprite.draw(batch);
+    }
+
 
     public float getCarrying() {
         return carrying;
-    }
-
-    public void setCarrying(float carrying) {
-        this.carrying = carrying;
     }
 
     public float getCarryPotential() {
@@ -69,26 +70,6 @@ public class WorkerAnt extends Actor {
 
     public void setGoal(Actor goal) {
         this.goal = goal;
-    }
-
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        this.sprite.animate(Gdx.graphics.getDeltaTime());
-        this.sprite.setPosition(this.getX(), this.getY());
-        this.sprite.setRotation(this.getRotation() - 90);
-        this.sprite.draw(batch);
-    }
-
-    public Pheromone getPheromone() {
-        return pheromone;
-    }
-
-    public void setPheromone(Pheromone pheromone) {
-        this.pheromone = pheromone;
-    }
-
-    public StateMachine<WorkerAnt, WorkerAntMovementState> getMovementStateMachine() {
-        return movementStateMachine;
     }
 
     public float getSensibility() {
@@ -122,14 +103,6 @@ public class WorkerAnt extends Actor {
 
 
         }
-        switch (this.getPheromone()) {
-            case NO_PHEROMONE:
-                break;
-            case FOOD_SOURCE_PHEROMONE:
-                break;
-            case HOME_PHEROMONE:
-                break;
-        }
 
     }
 
@@ -143,7 +116,7 @@ public class WorkerAnt extends Actor {
 
 
     private void randomStep(float delta) {
-        this.rotateBy((float) (rand.nextGaussian() * WorkerAnt.deviation) * delta);
+        this.rotateBy(UsefulMath.nextGaussian(movementDeviation) * delta);
         movement = UsefulMath.setVector(this.getRotation(), speed * delta);
     }
 

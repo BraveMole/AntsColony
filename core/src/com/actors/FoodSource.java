@@ -13,7 +13,7 @@ public class FoodSource extends Actor {
         this.foodQuantity = foodQuantity;
         this.setX(x);
         this.setY(y);
-        this.sprite = new AnimatedSprite(TextureLoader.foodSource, x, y, 0, foodQuantity, foodQuantity);
+        this.sprite = new AnimatedSprite(TextureLoader.foodSource, x, y, 0, foodQuantity * 4, foodQuantity * 4);
     }
 
     @Override

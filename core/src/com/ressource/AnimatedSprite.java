@@ -14,17 +14,20 @@ public class AnimatedSprite extends Sprite {
     private float timeElapsed;
 
 
-    public AnimatedSprite(float frameDuration, Texture texture, TextureRegion[] keyFrames, float x, float y, float rotation, float width, float height) {
+    private AnimatedSprite(float frameDuration, TextureRegion[] keyFrames, float x, float y, float rotation, float width, float height) {
         this.frameDuration = frameDuration;
         this.animationDuration = frameDuration * keyFrames.length;
         this.arrayFrame = keyFrames;
         this.timeElapsed = 0;
         this.frameIndex = 0;
-        this.setTexture(texture);
         this.setRegion(keyFrames[frameIndex]);
         this.setPosition(x, y);
         this.setSize(width, height);
         this.setRotation(rotation);
+    }
+
+    public AnimatedSprite(Animation animation, float x, float y, float rotation) {
+        this(animation.getFrameDuration(), animation.getKeyFrames(), x, y, rotation, animation.getWidth(), animation.getHeight());
     }
 
     public AnimatedSprite(Texture texture, float x, float y, float rotation, float width, float height) {
@@ -37,6 +40,28 @@ public class AnimatedSprite extends Sprite {
 
     public AnimatedSprite(Texture texture, float x, float y, float rotation) {
         this(texture, x, y, rotation, texture.getWidth(), texture.getHeight());
+    }
+
+    private void switchAnimation(float frameDuration, TextureRegion[] keyFrames, float rotation, float width, float height) {
+        this.frameDuration = frameDuration;
+        this.animationDuration = frameDuration * keyFrames.length;
+        this.arrayFrame = keyFrames;
+        this.timeElapsed = 0;
+        this.frameIndex = 0;
+        this.setRegion(keyFrames[frameIndex]);
+        this.setSize(width, height);
+        this.setRotation(rotation);
+    }
+
+    public void switchAnimation(Animation animation) {
+        this.switchAnimation(animation.getFrameDuration(), animation.getKeyFrames(), this.getRotation(), animation.getWidth(), animation.getHeight());
+    }
+
+    public void switchAnimation(Texture texture, float rotation, float width, float height) {
+        frameDuration = 0;
+        animationDuration = 0;
+        this.setSize(width, height);
+        this.setRotation(rotation);
     }
 
     @Override
@@ -55,13 +80,15 @@ public class AnimatedSprite extends Sprite {
     }
 
     public void animate(float delta) {
-        timeElapsed += delta;
-        while (timeElapsed >= animationDuration) {
-            timeElapsed -= animationDuration;
-        }
-        if ((int) (timeElapsed / frameDuration) != frameIndex) {
-            frameIndex = (int) (timeElapsed / frameDuration);
-            this.setRegion(arrayFrame[frameIndex]);
+        if (animationDuration != 0) {
+            timeElapsed += delta;
+            while (timeElapsed >= animationDuration) {
+                timeElapsed -= animationDuration;
+            }
+            if ((int) (timeElapsed / frameDuration) != frameIndex) {
+                frameIndex = (int) (timeElapsed / frameDuration);
+                this.setRegion(arrayFrame[frameIndex]);
+            }
         }
     }
 
