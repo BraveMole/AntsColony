@@ -17,6 +17,7 @@ public enum WorkerAntMovementState implements State<WorkerAnt> {
         public void enter(WorkerAnt ant) {
             ant.setRotation(new Random().nextFloat() * 360);
             ant.sprite.switchAnimation(Animation.WORKERANT_WALKING);
+            ant.setPheromone(Pheromone.HOME_PHEROMONE);
         }
 
         @Override
@@ -41,7 +42,6 @@ public enum WorkerAntMovementState implements State<WorkerAnt> {
     TAKE_FOOD() {
         @Override
         public void enter(WorkerAnt ant) {
-            ant.setGoal(null);
             ant.sprite.switchAnimation(Animation.WORKERANT_EATING);
         }
 
@@ -54,6 +54,12 @@ public enum WorkerAntMovementState implements State<WorkerAnt> {
     },
 
     RETURN_TO_BASE_WITH_FOOD() {
+        @Override
+        public void enter(WorkerAnt entity) {
+            entity.sprite.switchAnimation(Animation.WORKERANT_WALKING);
+            entity.setAnthillAsGoal();
+        }
+
         @Override
         public void update(WorkerAnt entity) {
 

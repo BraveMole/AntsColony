@@ -21,14 +21,18 @@ public class FoodSource extends Actor {
         this.sprite.draw(batch);
     }
 
-    public float removeFood(float quantity) {
+    public float giveFood(float quantity) {
         this.foodQuantity -= quantity;
-        if (foodQuantity <= 0) {
-            this.getParent().removeActor(this);
-            return -foodQuantity;
+        this.sprite.setSize(foodQuantity * 4, foodQuantity * 4);
+        if (foodQuantity < 0) {
+            return quantity + foodQuantity;
         } else {
-            return 0;
+            return quantity;
         }
+    }
+
+    public void takeFood(float quantity) {
+        this.foodQuantity += quantity;
     }
 
 

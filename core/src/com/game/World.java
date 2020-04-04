@@ -6,10 +6,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.ressource.WorldSettings;
 
 
 public class World extends Stage {
     public static World mainWorld;
+    private WorldSettings settings;
 
     private float zoneSize;
     private ShapeRenderer shape;
@@ -18,14 +20,19 @@ public class World extends Stage {
 
     private Array<Array<Zone>> LZone;
 
-    public World(float zoneSize) {
-        this.zoneSize = zoneSize;
+    public World(WorldSettings settings) {
+        this.settings = settings;
+        this.zoneSize = settings.getZoneSize();
         this.LZone = new Array<>();
         shape = new ShapeRenderer();
         ants = new Group();
         environment = new Group();
         super.getRoot().addActor(environment);
         super.getRoot().addActor(ants);
+    }
+
+    public WorldSettings getSettings() {
+        return settings;
     }
 
     public void addAnt(Actor actor) {

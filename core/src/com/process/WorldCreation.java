@@ -13,8 +13,7 @@ import static com.game.World.mainWorld;
 
 public class WorldCreation {
     public static void Creation(WorldSettings settings) {
-
-        mainWorld = new World(settings.getZoneSize());
+        mainWorld = new World(settings);
         createZones(settings);
         addActors();
     }
@@ -31,9 +30,16 @@ public class WorldCreation {
     }
 
     private static void addActors() {
-        mainWorld.addAnt((new WorkerAnt(200, 200, 0)));
-        mainWorld.addEnvironment(new AnthillEntrance(500, 500));
+        AnthillEntrance anthillEntrance = new AnthillEntrance(500, 500);
+        mainWorld.addEnvironment(anthillEntrance);
+        addAnt(200, 200, 0, anthillEntrance);
         addFoodSource(400, 200, 10);
+    }
+
+    private static void addAnt(float x, float y, float rotation, AnthillEntrance anthillEntrance) {
+        WorkerAnt worker = new WorkerAnt(x, y, rotation);
+        mainWorld.addAnt(worker);
+        worker.setAnthill(anthillEntrance);
     }
 
     private static void addFoodSource(float x, float y, float foodQuantity) {

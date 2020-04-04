@@ -1,5 +1,6 @@
 package com.actors;
 
+import com.ai.Pheromone;
 import com.ai.WorkerAntMovementState;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
@@ -18,15 +19,18 @@ public class WorkerAnt extends Actor {
     public StateMachine<WorkerAnt, WorkerAntMovementState> movementStateMachine;
     public AnimatedSprite sprite;
     private float speed;
+    private AnthillEntrance anthill;
     private Actor goal;
+    private Pheromone pheromone;
     private Vector2 movement;
     private Zone currentZone;
     private float movementDeviation;
     private float sensibility;
     private float elapsedTimeBetweenDecision;
     private float carryPotential;
+    private float carryingSpeed;
     private float carrying;
-
+    private float pheromonePower;
     public WorkerAnt(float x, float y, float rotation) {
         this.setX(x);
         this.setY(y);
@@ -35,9 +39,14 @@ public class WorkerAnt extends Actor {
         this.setCurrentZone(SearchZone.searchZone(x, y));
         this.setRotation(rotation);
         this.sprite = new AnimatedSprite(Animation.WORKERANT_WALKING, x, y, this.getRotation());
-        this.movementStateMachine = new DefaultStateMachine<>(this, WorkerAntMovementState.SEARCH_FOR_FOOD_SOURCE);
+        this.movementStateMachine = new DefaultStateMachine<>(this);
+        this.movementStateMachine.changeState(WorkerAntMovementState.SEARCH_FOR_FOOD_SOURCE);
         this.goal = null;
         this.setCharacteristics(AntsCharacteristics.WORKER_ANT);
+    }
+
+    public void setAnthill(AnthillEntrance anthill) {
+        this.anthill = anthill;
     }
 
     private void setCharacteristics(AntsCharacteristics characteristics) {
@@ -45,6 +54,7 @@ public class WorkerAnt extends Actor {
         this.sensibility = characteristics.getSensibility();
         this.movementDeviation = characteristics.getMovementDeviation();
         this.carryPotential = characteristics.getCarryingPotential();
+        this.carryingSpeed = characteristics.getCarryingSpeed();
     }
 
     @Override
@@ -55,6 +65,13 @@ public class WorkerAnt extends Actor {
         this.sprite.draw(batch);
     }
 
+    public Pheromone getPheromone() {
+        return pheromone;
+    }
+
+    public void setPheromone(Pheromone pheromone) {
+        this.pheromone = pheromone;
+    }
 
     public float getCarrying() {
         return carrying;
@@ -87,6 +104,11 @@ public class WorkerAnt extends Actor {
     private void move() {
         this.moveBy(movement.x, movement.y);
         this.setCurrentZone(SearchZone.searchZone(this.getX(), this.getY()));
+        this.putPheromone();
+    }
+
+    private void putPheromone() {
+        UsefulMath.getCurrentPheromone(this).add(movement.rotate(180));
     }
 
     public void act(float delta) {
@@ -97,8 +119,12 @@ public class WorkerAnt extends Actor {
                 move();
                 break;
             case GO_TO_FOOD_SOURCE:
+            case RETURN_TO_BASE_WITH_FOOD:
                 stepToGoal(delta);
                 move();
+                break;
+            case TAKE_FOOD:
+                takeFood(delta);
                 break;
 
 
@@ -108,10 +134,14 @@ public class WorkerAnt extends Actor {
 
     public void update(float delta) {
         this.elapsedTimeBetweenDecision += delta;
-        if (this.elapsedTimeBetweenDecision > 0.5f) {
+        if (this.elapsedTimeBetweenDecision > 0.1f) {
             this.elapsedTimeBetweenDecision = 0;
             movementStateMachine.update();
         }
+    }
+
+    public void setAnthillAsGoal() {
+        this.setGoal(this.anthill);
     }
 
 
@@ -123,6 +153,19 @@ public class WorkerAnt extends Actor {
     private void stepToGoal(float delta) {
         movement = UsefulMath.setVector(this, goal, speed * delta);
         this.setRotation(movement.angle());
+    }
+
+    private void takeFood(float delta) {
+        float quantity = ((FoodSource) goal).giveFood(this.carryingSpeed * delta);
+        if (quantity == 0) {
+            this.movementStateMachine.changeState(WorkerAntMovementState.RETURN_TO_BASE_WITH_FOOD);
+        }
+        this.carrying += quantity;
+        if (this.carrying >= this.carryPotential) {
+            ((FoodSource) goal).takeFood(this.carrying - this.carryPotential);
+            this.carrying = this.carryPotential;
+            this.movementStateMachine.changeState(WorkerAntMovementState.RETURN_TO_BASE_WITH_FOOD);
+        }
     }
 
 }
