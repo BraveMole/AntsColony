@@ -1,19 +1,21 @@
 package com.ressource;
 
 public enum WorldSettings {
-    TEST_WORLD(2000, 2000, 200, 10, 0.9f);
+    TEST_WORLD(2000, 2000, 1000, 50, 0.9f, 0.25f);
     private float xLimit;
     private float yLimit;
-    private float pheromoneEvaporationRate;//0.9 means 10% of the pheromone disappear every sec
-    private float distanceBetweenPheromones;
     private int zoneSize;
+    private float distanceBetweenPheromones;
+    private float pheromoneEvaporationRate;//0.9 means 10% of the pheromone disappear every sec
+    private float AICycleTime;//Time between two AI process
 
-    WorldSettings(float xLimit, float yLimit, int zoneSize, float distanceBetweenPheromones, float pheromoneEvaporationRate) {
+    WorldSettings(float xLimit, float yLimit, int zoneSize, float distanceBetweenPheromones, float pheromoneEvaporationRate, float AICycleTime) {
         this.xLimit = xLimit;
         this.yLimit = yLimit;
         this.zoneSize = zoneSize;
         this.distanceBetweenPheromones = distanceBetweenPheromones;
         this.pheromoneEvaporationRate = pheromoneEvaporationRate;
+        this.AICycleTime = AICycleTime;
     }
 
     public float getDistanceBetweenPheromones() {
@@ -34,5 +36,9 @@ public enum WorldSettings {
 
     public int getZoneSize() {
         return zoneSize;
+    }
+
+    public float getAICycleTime() {
+        return AICycleTime;
     }
 }

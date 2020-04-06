@@ -24,11 +24,16 @@ public class FoodSource extends Actor {
     public float giveFood(float quantity) {
         this.foodQuantity -= quantity;
         this.sprite.setSize(foodQuantity * 4, foodQuantity * 4);
-        if (foodQuantity < 0) {
+        if (foodQuantity <= 0) {
+            foodQuantity = 0;
             return quantity + foodQuantity;
         } else {
             return quantity;
         }
+    }
+
+    public float getFoodQuantity() {
+        return foodQuantity;
     }
 
     public void takeFood(float quantity) {

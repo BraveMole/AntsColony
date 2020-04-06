@@ -3,9 +3,12 @@ package com.process;
 import com.actors.AnthillEntrance;
 import com.actors.FoodSource;
 import com.actors.WorkerAnt;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.game.World;
 import com.game.Zone;
 import com.ressource.WorldSettings;
+import utils.BehaviorTreeViewer;
 
 import java.util.Objects;
 
@@ -30,16 +33,24 @@ public class WorldCreation {
     }
 
     private static void addActors() {
-        AnthillEntrance anthillEntrance = new AnthillEntrance(500, 500);
+        AnthillEntrance anthillEntrance = new AnthillEntrance(500, 300);
         mainWorld.addEnvironment(anthillEntrance);
-        addAnt(200, 200, 0, anthillEntrance);
-        addFoodSource(400, 200, 10);
+        addAnt(500, 300, 0, anthillEntrance);
+        addFoodSource(500, 100, 10);
+        addFoodSource(500, 500, 10);
+        addFoodSource(300, 300, 10);
+        addFoodSource(700, 300, 10);
     }
 
     private static void addAnt(float x, float y, float rotation, AnthillEntrance anthillEntrance) {
+        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
         WorkerAnt worker = new WorkerAnt(x, y, rotation);
         mainWorld.addAnt(worker);
         worker.setAnthill(anthillEntrance);
+        BehaviorTreeViewer BTV = worker.createBehaviorTreeViewer(skin);
+        BTV.setPosition(1000, 400);
+        mainWorld.addActor(BTV);
+
     }
 
     private static void addFoodSource(float x, float y, float foodQuantity) {

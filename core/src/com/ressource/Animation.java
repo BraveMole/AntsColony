@@ -3,8 +3,9 @@ package com.ressource;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public enum Animation {
-    WORKERANT_WALKING(1 / 6f, TextureLoader.workerAntWalking, 25, 37),
-    WORKERANT_EATING(1 / 2f, TextureLoader.workerAntEating, 25, 37);
+    WORKER_ANT_WALKING(1 / 6f, TextureLoader.workerAntWalking, 25, 37),
+    WORKER_ANT_EATING(1 / 2f, TextureLoader.workerAntEating, 25, 37),
+    WORKER_ANT_STILL(0, TextureLoader.workerAntEating, 25, 37);
 
     private float frameDuration;
     private TextureRegion[] keyFrames;

@@ -1,7 +1,9 @@
 package com.game;
 
 import com.actors.FoodSource;
+import com.actors.Pheromone;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 
@@ -15,7 +17,8 @@ public class Zone extends Actor {
     private float sizeOfZone;
     private float timeElapsed;
 
-    private Array<Array<Vector2>> homePheromoneGrid;
+    private Array<Array<Pheromone>> homePheromoneGrid;
+    private Array<Array<Pheromone>> foodPheromoneGrid;
     private Array<Zone> ArrayNeighbours;
     private Array<FoodSource> ArrayFoodSource;
 
@@ -28,10 +31,13 @@ public class Zone extends Actor {
         this.ArrayFoodSource = new Array<>();
         this.ArrayNeighbours = new Array<>();
         this.homePheromoneGrid = new Array<>();
+        this.foodPheromoneGrid = new Array<>();
         for (int i = 0; i < sizeOfZone / mainWorld.getSettings().getDistanceBetweenPheromones(); i++) {
-            this.homePheromoneGrid.add(new Array<Vector2>());
+            this.homePheromoneGrid.add(new Array<Pheromone>());
+            this.foodPheromoneGrid.add(new Array<Pheromone>());
             for (int j = 0; j < sizeOfZone / mainWorld.getSettings().getDistanceBetweenPheromones(); j++) {
-                this.homePheromoneGrid.get(i).add(new Vector2());
+                this.homePheromoneGrid.get(i).add(new Pheromone());
+                this.foodPheromoneGrid.get(i).add(new Pheromone());
             }
         }
     }
@@ -44,10 +50,15 @@ public class Zone extends Actor {
         }
     }
 
+    public Array<Array<Pheromone>> getFoodPheromoneGrid() {
+        return foodPheromoneGrid;
+    }
+
     private void pheromoneEvaporation() {
         for (int i = 0; i < sizeOfZone / 10; i++) {
             for (int j = 0; j < sizeOfZone / 10; j++) {
-                this.homePheromoneGrid.get(i).get(j).scl(mainWorld.getSettings().getPheromoneEvaporationRate());
+                this.homePheromoneGrid.get(i).get(j).evaporate(mainWorld.getSettings().getPheromoneEvaporationRate());
+                this.foodPheromoneGrid.get(i).get(j).evaporate(mainWorld.getSettings().getPheromoneEvaporationRate());
             }
         }
     }
@@ -68,7 +79,7 @@ public class Zone extends Actor {
         return y;
     }
 
-    public Array<Array<Vector2>> getHomePheromoneGrid() {
+    public Array<Array<Pheromone>> getHomePheromoneGrid() {
         return homePheromoneGrid;
     }
 
