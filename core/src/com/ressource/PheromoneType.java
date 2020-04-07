@@ -1,4 +1,4 @@
-package com.ai;
+package com.ressource;
 
 public enum PheromoneType {
     NO_PHEROMONE,

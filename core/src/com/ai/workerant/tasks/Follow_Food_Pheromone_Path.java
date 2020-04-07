@@ -2,7 +2,7 @@ package com.ai.workerant.tasks;
 
 import com.actors.Pheromone;
 import com.actors.WorkerAnt;
-import com.ai.PheromoneType;
+import com.ressource.PheromoneType;
 import com.badlogic.gdx.ai.btree.LeafTask;
 import com.badlogic.gdx.ai.btree.Task;
 import com.process.SearchFood;

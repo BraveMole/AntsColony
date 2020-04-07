@@ -32,7 +32,7 @@ public class UsefulMath {
     }
 
     public static boolean isCloseToAZone(Actor a, Zone b) {
-        return (Math.abs(a.getX() - b.getX()) < (b.getSizeOfZone() * 1.5) & Math.abs(a.getY() - b.getY()) < (b.getSizeOfZone() * 1.5));
+        return (Math.abs(a.getX() - b.getX()) < (mainWorld.getSettings().getZoneSize() * 1.5) & Math.abs(a.getY() - b.getY()) < (mainWorld.getSettings().getZoneSize() * 1.5));
     }
 
     public static float nextGaussian(float deviation) {

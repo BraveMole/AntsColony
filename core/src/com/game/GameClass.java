@@ -22,10 +22,6 @@ public class GameClass extends ApplicationAdapter {
     public void create() {
         TextureLoader.loadTexture();
         WorldCreation.Creation(WorldSettings.TEST_WORLD);
-        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
-        cam.update();
-        mainWorld.getViewport().setCamera(cam);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.ressource.WorldSettings;
+import com.ui.WorldInputProcessor;
 
 
 public class World extends Stage {
@@ -17,6 +18,8 @@ public class World extends Stage {
     private ShapeRenderer shape;
     private Group ants;
     private Group environment;
+    private Group zones;
+    private WorldInputProcessor inputProcessor;
 
     private Array<Array<Zone>> LZone;
 
@@ -26,9 +29,23 @@ public class World extends Stage {
         this.LZone = new Array<>();
         shape = new ShapeRenderer();
         ants = new Group();
+        zones = new Group();
         environment = new Group();
-        super.getRoot().addActor(environment);
-        super.getRoot().addActor(ants);
+        super.addActor(zones);
+        super.addActor(environment);
+        super.addActor(ants);
+        this.getViewport().getCamera().viewportHeight = this.getViewport().getScreenHeight();
+        this.getViewport().getCamera().viewportWidth = this.getViewport().getScreenWidth();
+    }
+
+    @Override
+    public void act() {
+        super.act();
+        this.inputProcessor.act();
+    }
+
+    public void setInputProcessor(WorldInputProcessor inputProcessor) {
+        this.inputProcessor = inputProcessor;
     }
 
     public WorldSettings getSettings() {
@@ -49,6 +66,7 @@ public class World extends Stage {
 
     public void addZone(int column, int row, boolean endRow, Zone zone) {
         this.LZone.get(column).add(zone);
+        zones.addActor(zone);
         if (column > 0) { //Construct the list of neighbouring Zones
             zone.addNeighbour(this.LZone.get(column - 1).get(row), true);
             if (row > 0) {
@@ -66,11 +84,6 @@ public class World extends Stage {
     @Override
     public void draw() {
         super.draw();
-        shape.setColor(Color.RED);
-        shape.begin(ShapeRenderer.ShapeType.Filled);
-        shape.circle(500, 500, 1);
-        shape.end();
-
     }
 
     public void addColumn() {

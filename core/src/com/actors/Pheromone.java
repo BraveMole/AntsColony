@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import static com.game.World.mainWorld;
 
-public class Pheromone extends Actor {
+public class Pheromone {
 
     private Vector2 direction;
     private float distance;
@@ -28,7 +28,6 @@ public class Pheromone extends Actor {
         return false;
     }
 
-    @Override
     public float getRotation() {
         return this.getDirection().angle();
     }

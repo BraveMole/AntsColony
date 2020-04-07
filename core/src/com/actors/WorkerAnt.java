@@ -1,11 +1,8 @@
 package com.actors;
 
-import com.ai.PheromoneType;
+import com.ressource.PheromoneType;
 import com.ai.workerant.WorkerAntBT;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.btree.BehaviorTree;
-import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -13,18 +10,16 @@ import com.game.Zone;
 import com.process.SearchPheromone;
 import com.process.SearchZone;
 import com.process.UsefulMath;
-import com.ressource.AnimatedSprite;
 import com.ressource.Animation;
 import com.ressource.AntsCharacteristics;
-import org.graalvm.compiler.lir.LIRInstruction;
 import utils.BehaviorTreeViewer;
 
 import static com.game.World.mainWorld;
 
-public class WorkerAnt extends Actor {
+public class WorkerAnt extends SuperActor {
     private PheromoneType pheromoneType;
 
-    public AnimatedSprite sprite;
+
     private float speed;
     private AnthillEntrance anthill;
     private Actor goal;
@@ -51,7 +46,7 @@ public class WorkerAnt extends Actor {
         this.elapsedTimeBetweenDecision = 0;
         this.setCurrentZone(SearchZone.searchZone(x, y));
         this.setRotation(rotation);
-        this.sprite = new AnimatedSprite(Animation.WORKER_ANT_STILL, x, y, this.getRotation());
+        this.setSprite(Animation.WORKER_ANT_STILL);
         this.pheromoneType = PheromoneType.NO_PHEROMONE;
         this.goal = null;
         this.setCharacteristics(AntsCharacteristics.WORKER_ANT);
@@ -93,14 +88,6 @@ public class WorkerAnt extends Actor {
         this.currentDistance = 0;
         this.eating = false;
         this.walking = false;
-    }
-
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        this.sprite.animate(Gdx.graphics.getDeltaTime());
-        this.sprite.setPosition(this.getX(), this.getY());
-        this.sprite.setRotation(this.getRotation() - 90);
-        this.sprite.draw(batch);
     }
 
     public PheromoneType getPheromoneType() {
@@ -213,13 +200,17 @@ public class WorkerAnt extends Actor {
     }
 
     private void takeFood(float delta) {
-        float quantity = ((FoodSource) goal).giveFood(this.carryingSpeed * delta);
-        this.carrying += quantity;
-        if (this.carrying >= this.carryPotential) {
-            ((FoodSource) goal).takeFood(this.carrying - this.carryPotential);
-            this.carrying = this.carryPotential;
+        try {
+            float quantity = ((FoodSource) goal).giveFood(this.carryingSpeed * delta);
+            this.carrying += quantity;
+            if (this.carrying >= this.carryPotential) {
+                ((FoodSource) goal).takeFood(this.carrying - this.carryPotential);
+                this.carrying = this.carryPotential;
+            }
+        } catch (NullPointerException e) {
+            System.out.println("Foodsource is null, can't take food in worker ant");
         }
     }
+    }
 
-}
 
